@@ -1,6 +1,6 @@
 # simple pyCan Example for can4linux
 import sys
-sys.path.insert(0, '../can4linux-code/can4linux-examples')
+sys.path.insert(0, '/root/can4linux-code/can4linux-examples')
 import pyCan
 print 'Python wrapper loaded'
 
