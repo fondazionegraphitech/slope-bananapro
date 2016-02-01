@@ -55,6 +55,7 @@ update() {
     now=$(date +"[%Y-%m-%d][%T]")
     result=$(git pull)
     echo "$now $result" >> /var/log/slope/update.log
+    start
   fi
 }
 

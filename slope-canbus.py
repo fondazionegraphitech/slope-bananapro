@@ -6,8 +6,9 @@ sys.path.insert(0, '/root/can4linux-code/can4linux-examples')
 import pyCan
 
 logFile = open("/var/log/slope/slope.log", "a")
+msgFile = open("/root/slope-canbus-messages.txt", "a")
 
-logFile.write('Python wrapper loaded');
+logFile.write('Python wrapper loaded\n');
 
 # setting the device number
 device = 0
@@ -21,17 +22,17 @@ try:
 	fileBaud.write(' '.join(baudRates))
 	fileBaud.close()
 except IOError:
-	logFile.write('Could not set the new bitrate');
+	logFile.write('Could not set the new bitrate\n');
 	exit()
 except IndexError:
-	logFile.write('No proper entry for bitrate of can'+ str(device) + ' found.');
+	logFile.write('No proper entry for bitrate of can'+ str(device) + ' found\n');
 	exit()
 
 #print 'open can'+ str(device) + ' none blocking'
 can_fd = pyCan.open(device)
 
 if (can_fd == -1):
-	logFile.write('error opening CAN device /dev/can'+ str(device));
+	logFile.write('error opening CAN device /dev/can'+ str(device) + '\n');
 	exit()
 
 count = 0
@@ -51,23 +52,23 @@ def sigterm_handler(_signo, _stack_frame):
 signal.signal(signal.SIGTERM, sigterm_handler)
 
 try:
-	logFile.write('Wait for message...');
+	logFile.write('Wait for message...\n');
 	count = 0
 	while True:
 		data = pyCan.read(can_fd)
 		arr = data.split(':', 1)
 		messId = arr[0]
 		if (messId == '512'):
-			logFile.write(data);
+			msgFile.write(data + '\n');
 		count = count + 1
 		if (count == 100):
 			count = 0
-			time.sleep(1)
+			time.sleep(0.5)
 finally:
     pyCan.close(can_fd)
-    logFile.write('/dev/can' + str(device) + ' closed.');
+    logFile.write('/dev/can' + str(device) + ' closed\n');
     logFile.close()
-
+    msgFile.close()
 #data = pyCan.read2(can_fd, timeout * 1000000)
 #arr = data.split(':', 3)
 #messByte = arr[2][1:]
@@ -86,6 +87,7 @@ finally:
 #print pyCan.read1(can_fd)
 
 pyCan.close(can_fd)
-logFile.write('/dev/can' + str(device) + ' closed.');
+logFile.write('/dev/can' + str(device) + ' closed\n');
 logFile.close()
+msgFile.close()
 exit()
