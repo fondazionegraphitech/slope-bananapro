@@ -1,0 +1,80 @@
+#!/bin/sh
+# /etc/init.d/slope
+#
+### BEGIN INIT INFO
+# Provides:          slope
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       SLOPE server daemon
+### END INIT INFO
+
+SCRIPT=/root/slope-bananapro/slope-canbus.py
+RUNAS=root
+PIDFILE=/var/run/slope.pid
+
+start() {
+  if [ -f "$PIDFILE" ] && kill -0 $(cat "$PIDFILE"); then
+    echo "Service already running" >&2
+    return 1
+  fi
+  echo "Starting service..." >&2
+  local CMD="python $SCRIPT & echo \$!"
+  su -c "$CMD" $RUNAS > "$PIDFILE"
+  echo "Service started" >&2
+}
+
+stop() {
+  if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
+    echo "Service not running" >&2
+    return 1
+  fi
+  echo "Stopping service..." >&2
+  kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
+  echo "Service stopped" >&2
+}
+
+status() {
+  if [ -f "$PIDFILE" ]; then
+    pid=$(cat "$PIDFILE")
+    echo "Service running with PID $pid" >&2
+  else
+    echo "Service not running" >&2
+  fi
+}
+
+update() {
+  # if service is running stop it before updating
+  if [ -f "$PIDFILE" ]; then
+    stop
+  fi
+  if [ ! -f "$PIDFILE" ]; then
+    echo "Updating service..." >&2
+    cd /root/slope-bananapro/
+    now=$(date +"[%Y-%m-%d][%T]")
+    result=$(git pull)
+    echo "$now $result" >> /var/log/slope/update.log
+  fi
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    status
+    ;;
+  update)
+    update
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|status|restart|update}"
+esac
