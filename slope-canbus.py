@@ -5,10 +5,24 @@ import sys
 sys.path.insert(0, '/root/can4linux-code/can4linux-examples')
 import pyCan
 
-logFile = open("/var/log/slope/slope.log", "a")
-msgFile = open("/root/slope-canbus-messages.txt", "a")
+logFile = open('/var/log/slope/slope.log', 'a')
+msgFile = open('/root/slope-canbus-messages.txt', 'a+')
 
-logFile.write('Python wrapper loaded\n');
+def writeLog(text):
+	now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	logFile.write('[' + now + '] ' + text + '\n')
+
+def writeMsg(text):
+	now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	msgFile.write('[' + now + '] ' + text + '\n')
+
+def sigterm_handler(_signo, _stack_frame):
+	# Raises SystemExit(0):
+	sys.exit(0)
+
+signal.signal(signal.SIGTERM, sigterm_handler)
+
+writeLog('Python wrapper loaded')
 
 # setting the device number
 device = 0
@@ -22,17 +36,17 @@ try:
 	fileBaud.write(' '.join(baudRates))
 	fileBaud.close()
 except IOError:
-	logFile.write('Could not set the new bitrate\n');
+	writeLog('Could not set the new bitrate')
 	exit()
 except IndexError:
-	logFile.write('No proper entry for bitrate of can'+ str(device) + ' found\n');
+	writeLog('No proper entry for bitrate of can'+ str(device) + ' found')
 	exit()
 
 #print 'open can'+ str(device) + ' none blocking'
 can_fd = pyCan.open(device)
 
 if (can_fd == -1):
-	logFile.write('error opening CAN device /dev/can'+ str(device) + '\n');
+	writeLog('Error opening CAN device /dev/can'+ str(device))
 	exit()
 
 count = 0
@@ -45,28 +59,24 @@ while (count < 1): # sent n-times the message
 #pyCan.send(can_fd,0,'0x100:0xaa,16,0x55')
 #print '... sent message'
 
-def sigterm_handler(_signo, _stack_frame):
-	# Raises SystemExit(0):
-	sys.exit(0)
-
-signal.signal(signal.SIGTERM, sigterm_handler)
-
 try:
-	logFile.write('Wait for message...\n');
+	writeLog('Wait for message...')
 	count = 0
 	while True:
 		data = pyCan.read(can_fd)
 		arr = data.split(':', 1)
 		messId = arr[0]
 		if (messId == '512'):
-			msgFile.write(data + '\n');
+			writeMsg(data)
 		count = count + 1
 		if (count == 100):
 			count = 0
 			time.sleep(0.5)
+except KeyboardInterrupt:
+	writeLog('Program exits with ctrl+c')
 finally:
     pyCan.close(can_fd)
-    logFile.write('/dev/can' + str(device) + ' closed\n');
+    writeLog('/dev/can' + str(device) + ' closed in finally')
     logFile.close()
     msgFile.close()
 #data = pyCan.read2(can_fd, timeout * 1000000)
@@ -87,7 +97,7 @@ finally:
 #print pyCan.read1(can_fd)
 
 pyCan.close(can_fd)
-logFile.write('/dev/can' + str(device) + ' closed\n');
+writeLog('/dev/can' + str(device) + ' closed at the end')
 logFile.close()
 msgFile.close()
 exit()
