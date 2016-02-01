@@ -1,5 +1,6 @@
 # simple pyCan Example for can4linux
 import time
+import datetime
 import signal
 import sys
 sys.path.insert(0, '/root/can4linux-code/can4linux-examples')
