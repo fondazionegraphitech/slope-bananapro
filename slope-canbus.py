@@ -6,8 +6,8 @@ import sys
 sys.path.insert(0, '/root/can4linux-code/can4linux-examples')
 import pyCan
 
-logFile = open('/var/log/slope/slope.log', 'a')
-msgFile = open('/root/slope-canbus-messages.txt', 'a+')
+logFile = open('/var/log/slope/slope.log', 'a', 1)
+msgFile = open('/root/slope-canbus-messages.txt', 'a+', 1)
 
 def writeLog(text):
 	now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
