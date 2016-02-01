@@ -80,6 +80,7 @@ finally:
     writeLog('/dev/can' + str(device) + ' closed in finally')
     logFile.close()
     msgFile.close()
+
 #data = pyCan.read2(can_fd, timeout * 1000000)
 #arr = data.split(':', 3)
 #messByte = arr[2][1:]
@@ -97,8 +98,8 @@ finally:
 #print 'Wait default timeout for an message.....'
 #print pyCan.read1(can_fd)
 
-pyCan.close(can_fd)
-writeLog('/dev/can' + str(device) + ' closed at the end')
-logFile.close()
-msgFile.close()
-exit()
+#pyCan.close(can_fd)
+#writeLog('/dev/can' + str(device) + ' closed at the end')
+#logFile.close()
+#msgFile.close()
+#exit()
