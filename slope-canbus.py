@@ -65,14 +65,21 @@ try:
 	count = 0
 	while True:
 		data = pyCan.read(can_fd)
-		arr = data.split(':', 1)
-		messId = arr[0]
-		if (messId == '512'):
-			writeMsg(data)
-		count = count + 1
-		if (count == 100):
-			count = 0
-			time.sleep(0.5)
+		arrMess = data.split(':', 3)
+		messId = arrMess[0][:len(arrMess[0])-1]
+		if (messId.isdigit()):
+			messId = int(messId)
+			if (messId == 512):
+				messBytes = arrMess[2][1:]
+				arrBytes = messBytes.split()
+				output = ""
+				for byte in arrBytes:
+					output = output + ' ' + byte
+				writeMsg("%d:%s" % (messId, output))
+			count = count + 1
+			if (count == 100):
+				count = 0
+				time.sleep(0.5)
 except KeyboardInterrupt:
 	writeLog('Program exits with ctrl+c')
 finally:

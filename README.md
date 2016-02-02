@@ -3,7 +3,8 @@
 
 ## System Requirements
 
-In order to run these scripts you need a [Banana PI Pro](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_Pro) with [Bananian OS](https://www.bananian.org/download) and the CAN bus device driver [can4linux](http://sourceforge.net/projects/can4linux).
+In order to use this project you need a [Banana PI Pro](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_Pro) with [Bananian OS](https://www.bananian.org/download) and the CAN bus device driver [can4linux](http://sourceforge.net/projects/can4linux).
+If you want to connect the BananaPro to a real CAN bus you also need a CAN transceiver like [Texas Instruments TI SN65HVD230](http://www.ti.com/product/SN65HVD230), which allows to connect the CAN_TX and CAN_RX pins provided by the Banana GPIO port to CAN_H and CAN_L used by CAN bus networks. We used the [WaveShare CAN board](http://www.waveshare.com/sn65hvd230-can-board.htm), which provides the "TI SN65HVD230" already mounted on board.
 
 These scripts have been tested with:
 
@@ -36,7 +37,7 @@ These scripts have been tested with:
 	* reboot
 	* apt-get install build-essential
 	* apt-get install subversion
-	* svn co https://svn.code.sf.net/p/can4linux/code/trunk can4linux-code
+	* svn co https://svn.code.sf.net/p/can4linux/code/trunk@517 can4linux-code
 	* uname -r
 	* apt-get install linux-headers-3.4.108-bananian
 	* cd /root/can4linux-code/can4linux/
