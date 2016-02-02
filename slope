@@ -57,7 +57,8 @@ update() {
     cd /root/slope-bananapro/
     now=$(date +"[%Y-%m-%d][%T]")
     result=$(git pull)
-    echo "$now $result" >> /var/log/slope/update.log
+    boot=$(sh install.sh)
+    echo "$now $result $boot" >> /var/log/slope/update.log
     start
   fi
 }

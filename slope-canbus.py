@@ -76,10 +76,10 @@ try:
 				for byte in arrBytes:
 					output = output + ' ' + byte
 				writeMsg("%d:%s" % (messId, output))
-			count = count + 1
-			if (count == 100):
-				count = 0
-				time.sleep(0.5)
+		count = count + 1
+		if (count == 100):
+			count = 0
+			time.sleep(0.5)
 except KeyboardInterrupt:
 	writeLog('Program exits with ctrl+c')
 finally:
