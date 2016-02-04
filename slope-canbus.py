@@ -88,18 +88,6 @@ finally:
     logFile.close()
     msgFile.close()
 
-#data = pyCan.read2(can_fd, timeout * 1000000)
-#arr = data.split(':', 3)
-#messByte = arr[2][1:]
-#data2 = arr[0].split('  ', 2)
-#messId = data2[2]
-#messLen = len(messId)
-#messId = int(messId[:messLen-1], 0)
-#if (messId == 512):
-#	print messId
-#	print messByte
-#	count = count + 1
-
 #print 'Wait ' + str(timeout) + ' sec for an message.....'
 #print pyCan.read1(can_fd, timeout * 1000000)
 #print 'Wait default timeout for an message.....'

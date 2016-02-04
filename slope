@@ -19,6 +19,7 @@ start() {
     echo "Service already running" >&2
     return 1
   fi
+  update
   echo "Starting service..." >&2
   local CMD="python $SCRIPT & echo \$!"
   su -c "$CMD" $RUNAS > "$PIDFILE"
@@ -48,19 +49,13 @@ status() {
 }
 
 update() {
-  # if service is running stop it before updating
-  if [ -f "$PIDFILE" ]; then
-    stop
-  fi
-  if [ ! -f "$PIDFILE" ]; then
     echo "Updating service..." >&2
     cd /root/slope-bananapro/
     now=$(date +"[%Y-%m-%d][%T]")
     result=$(git pull)
     boot=$(sh install.sh)
     echo "$now $result $boot" >> /var/log/slope/update.log
-    start
-  fi
+    cd
 }
 
 case "$1" in
@@ -73,13 +68,10 @@ case "$1" in
   status)
     status
     ;;
-  update)
-    update
-    ;;
   restart)
     stop
     start
     ;;
   *)
-    echo "Usage: $0 {start|stop|status|restart|update}"
+    echo "Usage: $0 {start|stop|status|restart}"
 esac
