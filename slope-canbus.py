@@ -9,6 +9,26 @@ import pyCan
 logFile = open('/var/log/slope/slope.log', 'a', 1)
 msgFile = open('/root/slope-canbus-messages.txt', 'a+', 1)
 
+def getLiftingStatus(status):
+	if (status == 0):
+		return "stop"
+	elif (status == 1):
+		return "going up"
+	elif (status == 2):
+		return "going down"
+	else:
+		return "error"
+
+def getTranslationStatus(status):
+	if (status == 0):
+		return "stop"
+	elif (status == 1):
+		return "going to load"
+	elif (status == 2):
+		return "going to release"
+	else:
+		return "error"
+
 def writeLog(text):
 	now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	logFile.write('[' + now + '] ' + text + '\n')
@@ -50,36 +70,66 @@ if (can_fd == -1):
 	writeLog('Error opening CAN device /dev/can'+ str(device))
 	exit()
 
-count = 0
-while (count < 1): # sent n-times the message
-	# send 8 byte with messageID 385dec = 181hex
-	pyCan.send(can_fd,8,'385:1,2,3,4,5,6,7,8')
-	count = count + 1
-
-# use hex
-#pyCan.send(can_fd,0,'0x100:0xaa,16,0x55')
-#print '... sent message'
-
 try:
 	writeLog('Wait for message...')
 	count = 0
+	flip = '0'
 	while True:
 		data = pyCan.read(can_fd)
 		arrMess = data.split(':', 3)
 		messId = arrMess[0][:len(arrMess[0])-1]
 		if (messId.isdigit()):
 			messId = int(messId)
-			if (messId == 512):
-				messBytes = arrMess[2][1:]
-				arrBytes = messBytes.split()
-				output = ""
-				for byte in arrBytes:
-					output = output + ' ' + byte
+		if (messId == 30):
+			# print messId
+			start = arrMess[1].find("(")
+			end = arrMess[1].find(")")
+			bytesNum = arrMess[1][start+1:end]
+			# print bytesNum
+			messBytes = arrMess[2][1:]
+			arrBytes = messBytes.split()
+			if (bytesNum.isdigit()):
+				bytesNum = int(bytesNum)
+			if (bytesNum == len(arrBytes)):
+				weight = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[0]), int(arrBytes[1])])))[0]) # (kg) kilogrammes
+				position = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[2]), int(arrBytes[3])])))[0]) # (m) meters
+				speed = float(struct.unpack('>f', "".join(map(chr, [int(arrBytes[4]), int(arrBytes[5]), int(arrBytes[6]), int(arrBytes[7])])))[0]) # (m/s) meters at second
+
+				output = str(weight) + "kg " + str(position) + "m " + str(speed) + "m/s "
+				# decide what to do...
 				writeMsg("%d:%s" % (messId, output))
+
+		if (messId == 31):
+			# print messId
+			start = arrMess[1].find("(")
+			end = arrMess[1].find(")")
+			bytesNum = arrMess[1][start+1:end]
+			# print bytesNum
+			messBytes = arrMess[2][1:]
+			arrBytes = messBytes.split()
+			if (bytesNum.isdigit()):
+				bytesNum = int(bytesNum)
+			if (bytesNum == len(arrBytes)):
+				axleX = int(arrBytes[0]) # (%) percentage of X axle grade (frontal)
+				axleY = int(arrBytes[1]) # (%) percentage of Y axle grade (lateral)
+				consumption = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[2]), int(arrBytes[3])])))[0]) # (l/h) liters at hour
+				lifting = getLiftingStatus(int(arrBytes[4])) # lifting status (0='stop', 1='up', 2='down')
+				translation = getTranslationStatus(int(arrBytes[5])) # translation status (0='stop', 1='to load', 2='to release')
+				
+				output = str(axleX) + "% " + str(axleY) + "% " + str(consumption) + "l/h " + lifting + " " + translation
+				# decide what to do...
+				writeMsg("%d:%s" % (messId, output))
+
 		count = count + 1
 		if (count == 100):
 			count = 0
+			pyCan.send(can_fd,1,'60:' + flip)
+			if (flip == '0'):
+				flip = '1'
+			if (flip == '1'):
+				flip = '0'
 			time.sleep(0.5)
+
 except KeyboardInterrupt:
 	writeLog('Program exits with ctrl+c')
 finally:
