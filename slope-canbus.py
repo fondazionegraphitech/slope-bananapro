@@ -148,11 +148,12 @@ try:
 				flip = '1'
 			if flip == '1':
 				flip = '0'
-			subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar", shell=True)
-			time.sleep(1)
+			try:
+				subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar", shell=True)
+			except subprocess.CalledProcessError:
+				write_log('Error executing lib: TagsReader.jar')
 
-except subprocess.CalledProcessError:
-	write_log('Error executing lib: TagsReader.jar')
+			time.sleep(1)
 
 except KeyboardInterrupt:
 	write_log('Program exits with ctrl+c')
