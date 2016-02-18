@@ -5,6 +5,7 @@ import signal
 import sys
 import subprocess
 import struct
+
 sys.path.insert(0, '/root/can4linux-code/can4linux-examples')
 import pyCan
 
@@ -147,7 +148,7 @@ try:
 				flip = '1'
 			if flip == '1':
 				flip = '0'
-			subprocess.call(['java -jar /root/slope-bananapro/TagsReader.jar'])
+			subprocess.call("java -jar /root/slope-bananapro/TagsReader.jar", shell=True)
 			time.sleep(0.5)
 
 except KeyboardInterrupt:
