@@ -149,7 +149,7 @@ try:
 			if flip == '1':
 				flip = '0'
 			subprocess.call("java -jar /root/slope-bananapro/TagsReader.jar &> /dev/null", shell=True)
-			time.sleep(0.5)
+			time.sleep(1)
 
 except KeyboardInterrupt:
 	write_log('Program exits with ctrl+c')
