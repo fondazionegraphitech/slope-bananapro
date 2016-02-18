@@ -147,7 +147,7 @@ try:
 				flip = '1'
 			if flip == '1':
 				flip = '0'
-			subprocess.call(['java -jar', 'TagsReader.jar'])
+			subprocess.call(['java -jar', '/root/slope-bananapro/TagsReader.jar'])
 			time.sleep(0.5)
 
 except KeyboardInterrupt:
