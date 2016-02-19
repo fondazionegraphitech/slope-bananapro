@@ -155,9 +155,9 @@ try:
 				translation = get_translation_status(int(arrBytes[5]))
 				# translation status (0='stop', 1='going to load', 2='going to release')
 
-				if translation == "going to load":
-					if os.path.isfile(tagsFilePath):
-						os.remove(tagsFilePath)
+				# if translation == "going to load":
+				# 	if os.path.isfile(tagsFilePath):
+				# 		os.remove(tagsFilePath)
 
 				# decide what to do...
 				# strOutput = str(axleX) + "% " + str(axleY) + "% " + str(consumption) + "l/h " + lifting + " " + translation
