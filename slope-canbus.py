@@ -14,7 +14,7 @@ import pyCan
 # the power expressed in (mV)
 # default is around 660mV
 # it must be an Integer greater then 45mV to reach ~50cm
-antennaPower = 55
+antennaPower = 100
 
 logFilePath = '/var/log/slope/slope.log'
 msgFilePath = '/root/slope-canbus-messages.txt'
