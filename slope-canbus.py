@@ -173,7 +173,7 @@ try:
 			if flip == '1':
 				flip = '0'
 			try:
-				subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar", antennaPower, shell=True)
+				subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + antennaPower, shell=True)
 			except subprocess.CalledProcessError:
 				write_log('Error executing lib: TagsReader.jar')
 
