@@ -5,12 +5,20 @@ import signal
 import sys
 import subprocess
 import struct
+import json
+import os.path
 
 sys.path.insert(0, '/root/can4linux-code/can4linux-examples')
 import pyCan
 
-logFile = open('/var/log/slope/slope.log', 'a', 1)
-msgFile = open('/root/slope-canbus-messages.txt', 'a+', 1)
+# the power expressed in (mV)
+# default is around 660mV
+# it must be an Integer greater then 45mV to reach ~50cm
+antennaPower = 55
+
+logFilePath = '/var/log/slope/slope.log'
+msgFilePath = '/root/slope-canbus-messages.txt'
+tagsFilePath = '/root/slope-rfid-tags.txt'
 
 
 def get_lifting_status(status):
@@ -36,13 +44,21 @@ def get_translation_status(status):
 
 
 def write_log(text):
+	logfile = open(logFilePath, 'a', 1)
 	now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-	logFile.write('[' + now + '] ' + text + '\n')
+	logfile.write('[' + now + '] ' + text + '\n')
+	logfile.close()
 
 
 def write_msg(text):
+	msgfile = open(msgFilePath, 'a+', 1)
 	now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-	msgFile.write('[' + now + '] ' + text + '\n')
+	msgfile.write('[' + now + '] ' + text + '\n')
+	msgfile.close()
+
+
+def get_timestamp():
+	return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
 
 def sigterm_handler(_signo, _stack_frame):
@@ -110,9 +126,11 @@ try:
 					map(chr, [int(arrBytes[4]), int(arrBytes[5]), int(arrBytes[6]), int(arrBytes[7])])))[0])
 				# (m/s) meters at second
 
-				output = str(weight) + "kg " + str(position) + "m " + str(speed) + "m/s "
 				# decide what to do...
-				write_msg("%d:%s" % (messId, output))
+				# strOutput = str(weight) + "kg " + str(position) + "m " + str(speed) + "m/s "
+				# write_msg("%d:%s" % (messId, strOutput))
+				objOutput = {"weight": weight, "position": position, "speed": speed, "timestamp": get_timestamp()}
+				write_msg(json.dumps(objOutput))
 
 		if messId == 31:
 			# print messId
@@ -132,13 +150,19 @@ try:
 				consumption = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[2]), int(arrBytes[3])])))[0])
 				# (l/h) liters at hour
 				lifting = get_lifting_status(int(arrBytes[4]))
-				# lifting status (0='stop', 1='up', 2='down')
+				# lifting status (0='stop', 1='going up', 2='going down')
 				translation = get_translation_status(int(arrBytes[5]))
-				# translation status (0='stop', 1='to load', 2='to release')
+				# translation status (0='stop', 1='going to load', 2='going to release')
 
-				output = str(axleX) + "% " + str(axleY) + "% " + str(consumption) + "l/h " + lifting + " " + translation
+				if translation == "going to load":
+					if os.path.isfile(tagsFilePath):
+						os.remove(tagsFilePath)
+
 				# decide what to do...
-				write_msg("%d:%s" % (messId, output))
+				# strOutput = str(axleX) + "% " + str(axleY) + "% " + str(consumption) + "l/h " + lifting + " " + translation
+				# write_msg("%d:%s" % (messId, strOutput))
+				objOutput = {"axleX": axleX, "axleY": axleY, "consumption": consumption, "lifting": lifting, "translation": translation, "timestamp": get_timestamp()}
+				write_msg(json.dumps(objOutput))
 
 		count += 1
 		if count == 100:
@@ -149,7 +173,7 @@ try:
 			if flip == '1':
 				flip = '0'
 			try:
-				subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar", shell=True)
+				subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar", antennaPower, shell=True)
 			except subprocess.CalledProcessError:
 				write_log('Error executing lib: TagsReader.jar')
 
@@ -161,8 +185,6 @@ except KeyboardInterrupt:
 finally:
 	pyCan.close(can_fd)
 	write_log('/dev/can' + str(device) + ' closed in finally')
-	logFile.close()
-	msgFile.close()
 
 # print 'Wait ' + str(timeout) + ' sec for an message.....'
 # print pyCan.read1(can_fd, timeout * 1000000)
