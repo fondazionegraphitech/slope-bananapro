@@ -13,7 +13,8 @@ import pyCan
 
 # the power expressed in (mV)
 # default is around 660mV
-# it must be an Integer greater then 45mV to reach ~50cm
+# it must be an Integer greater then 45
+# 45mV allows to detect tags at ~50cm
 antennaPower = 100
 
 logFilePath = '/var/log/slope/slope.log'
