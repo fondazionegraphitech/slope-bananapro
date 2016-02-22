@@ -11,10 +11,10 @@ import os.path
 sys.path.insert(0, '/root/can4linux-code/can4linux-examples')
 import pyCan
 
-# the power expressed in (mV)
-# default is around 660mV
+# the power expressed in (mW)
+# default is around 660
 # it must be an Integer greater then 45
-# 45mV allows to detect tags at ~50cm
+# 45mW allows to detect tags at aroud 50cm distance
 antennaPower = 100
 
 logFilePath = '/var/log/slope/slope.log'
