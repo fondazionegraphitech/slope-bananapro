@@ -15,7 +15,7 @@ import pyCan
 # default is around 660
 # it must be an Integer greater then 45
 # 45mW allows to detect tags at aroud 50cm distance
-antennaPower = 100
+antennaPower = 2000
 
 logFilePath = '/var/log/slope/slope.log'
 msgFilePath = '/root/slope-canbus-messages.txt'
