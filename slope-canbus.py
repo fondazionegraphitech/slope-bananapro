@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # simple pyCan Example for can4linux
 import time
 import datetime
@@ -17,9 +19,10 @@ import pyCan
 # 45mW allows to detect tags at aroud 50cm distance
 antennaPower = 2000
 
-logFilePath = '/var/log/slope/slope.log'
-msgFilePath = '/root/slope-canbus-messages.txt'
-tagsFilePath = '/root/slope-rfid-tags.txt'
+today = datetime.datetime.now().strftime("%Y-%m-%d")
+msgFilePath = '/root/slope-data/' + today + '_canbus-messages.txt'
+tagsFilePath = '/root/slope-data/' + today + '_rfid-tags.txt'
+logFilePath = '/var/log/slope/' + today + '_slope-canbus.log'
 
 
 def get_lifting_status(status):
@@ -53,8 +56,8 @@ def write_log(text):
 
 def write_msg(text):
 	msgfile = open(msgFilePath, 'a+', 1)
-	now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-	msgfile.write('[' + now + '] ' + text + '\n')
+	# now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	msgfile.write(text + '\n')
 	msgfile.close()
 
 
