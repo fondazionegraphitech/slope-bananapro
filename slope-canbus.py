@@ -8,7 +8,6 @@ import sys
 import subprocess
 import struct
 import json
-import os.path
 
 sys.path.insert(0, '/root/can4linux-code/can4linux-examples')
 import pyCan
@@ -105,6 +104,8 @@ try:
 	write_log('Wait for message...')
 	count = 0
 	flip = '0'
+	lastMsg30 = ""
+	lastMsg31 = ""
 	while True:
 		data = pyCan.read(can_fd)
 		arrMess = data.split(':', 3)
@@ -118,23 +119,25 @@ try:
 			bytesNum = arrMess[1][start + 1:end]
 			# print bytesNum
 			messBytes = arrMess[2][1:]
-			arrBytes = messBytes.split()
-			if bytesNum.isdigit():
-				bytesNum = int(bytesNum)
-			if bytesNum == len(arrBytes):
-				weight = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[0]), int(arrBytes[1])])))[0])
-				# (kg) kilogrammes
-				position = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[2]), int(arrBytes[3])])))[0])
-				# (m) meters
-				speed = float(struct.unpack('>f', "".join(
-					map(chr, [int(arrBytes[4]), int(arrBytes[5]), int(arrBytes[6]), int(arrBytes[7])])))[0])
-				# (m/s) meters at second
+			if messBytes != lastMsg30:  # discard new message if is equal to last one
+				lastMsg30 = messBytes
+				arrBytes = messBytes.split()
+				if bytesNum.isdigit():
+					bytesNum = int(bytesNum)
+				if bytesNum == len(arrBytes):
+					weight = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[0]), int(arrBytes[1])])))[0])
+					# (kg) kilogrammes
+					position = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[2]), int(arrBytes[3])])))[0])
+					# (m) meters
+					speed = float(struct.unpack('>f', "".join(
+						map(chr, [int(arrBytes[4]), int(arrBytes[5]), int(arrBytes[6]), int(arrBytes[7])])))[0])
+					# (m/s) meters at second
 
-				# decide what to do...
-				# strOutput = str(weight) + "kg " + str(position) + "m " + str(speed) + "m/s "
-				# write_msg("%d:%s" % (messId, strOutput))
-				objOutput = {"weight": weight, "position": position, "speed": speed, "timestamp": get_timestamp()}
-				write_msg(json.dumps(objOutput))
+					# decide what to do...
+					# strOutput = str(weight) + "kg " + str(position) + "m " + str(speed) + "m/s "
+					# write_msg("%d:%s" % (messId, strOutput))
+					objOutput = {"weight": weight, "position": position, "speed": speed, "timestamp": get_timestamp()}
+					write_msg(json.dumps(objOutput))
 
 		if messId == 31:
 			# print messId
@@ -143,30 +146,28 @@ try:
 			bytesNum = arrMess[1][start + 1:end]
 			# print bytesNum
 			messBytes = arrMess[2][1:]
-			arrBytes = messBytes.split()
-			if bytesNum.isdigit():
-				bytesNum = int(bytesNum)
-			if bytesNum == len(arrBytes):
-				axleX = int(arrBytes[0])
-				# (%) percentage of X axle grade (frontal)
-				axleY = int(arrBytes[1])
-				# (%) percentage of Y axle grade (lateral)
-				consumption = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[2]), int(arrBytes[3])])))[0])
-				# (l/h) liters at hour
-				lifting = get_lifting_status(int(arrBytes[4]))
-				# lifting status (0='stop', 1='going up', 2='going down')
-				translation = get_translation_status(int(arrBytes[5]))
-				# translation status (0='stop', 1='going to load', 2='going to release')
+			if messBytes != lastMsg31:  # discard new message if is equal to last one
+				lastMsg31 = messBytes
+				arrBytes = messBytes.split()
+				if bytesNum.isdigit():
+					bytesNum = int(bytesNum)
+				if bytesNum == len(arrBytes):
+					axleX = int(arrBytes[0])
+					# (%) percentage of X axle grade (frontal)
+					axleY = int(arrBytes[1])
+					# (%) percentage of Y axle grade (lateral)
+					consumption = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[2]), int(arrBytes[3])])))[0])
+					# (l/h) liters at hour
+					lifting = get_lifting_status(int(arrBytes[4]))
+					# lifting status (0='stop', 1='going up', 2='going down')
+					translation = get_translation_status(int(arrBytes[5]))
+					# translation status (0='stop', 1='going to load', 2='going to release')
 
-				# if translation == "going to load":
-				# 	if os.path.isfile(tagsFilePath):
-				# 		os.remove(tagsFilePath)
-
-				# decide what to do...
-				# strOutput = str(axleX) + "% " + str(axleY) + "% " + str(consumption) + "l/h " + lifting + " " + translation
-				# write_msg("%d:%s" % (messId, strOutput))
-				objOutput = {"axleX": axleX, "axleY": axleY, "consumption": consumption, "lifting": lifting, "translation": translation, "timestamp": get_timestamp()}
-				write_msg(json.dumps(objOutput))
+					# decide what to do...
+					# strOutput = str(axleX) + "% " + str(axleY) + "% " + str(consumption) + "l/h " + lifting + " " + translation
+					# write_msg("%d:%s" % (messId, strOutput))
+					objOutput = {"axleX": axleX, "axleY": axleY, "consumption": consumption, "lifting": lifting, "translation": translation, "timestamp": get_timestamp()}
+					write_msg(json.dumps(objOutput))
 
 		count += 1
 		if count == 100:
