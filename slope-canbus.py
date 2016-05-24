@@ -172,7 +172,7 @@ try:
 					lastLifting = lifting
 
 		count += 1
-		if count == 100 & lastLifting == 1:
+		if count == 100:
 			count = 0
 			pyCan.send(can_fd, 1, '60:' + flip)
 			if flip == '0':
@@ -180,7 +180,9 @@ try:
 			if flip == '1':
 				flip = '0'
 			try:
-				subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower), shell=True)
+				if lastLifting == 1:
+					subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower), shell=True)
+					lastLifting = 0
 			except subprocess.CalledProcessError:
 				write_log('Error executing lib: TagsReader.jar')
 
