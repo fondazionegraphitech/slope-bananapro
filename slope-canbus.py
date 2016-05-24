@@ -171,7 +171,7 @@ try:
 					write_msg(json.dumps(objOutput))
 
 		count += 1
-		if count == 100 & lifting == 1:
+		if count == 100:
 			count = 0
 			pyCan.send(can_fd, 1, '60:' + flip)
 			if flip == '0':
@@ -183,7 +183,7 @@ try:
 			except subprocess.CalledProcessError:
 				write_log('Error executing lib: TagsReader.jar')
 
-			time.sleep(1)
+			time.sleep(5)
 
 except KeyboardInterrupt:
 	write_log('Program exits with ctrl+c')
