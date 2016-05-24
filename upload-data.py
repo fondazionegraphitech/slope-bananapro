@@ -8,14 +8,14 @@ import time
 import os
 
 # URL or IP and Port of Industrial PC
-url = "192.168.253.100:8080"
-servlet = "/SlopeIndustrialPC"
+url = "127.0.0.1:80"
+servlet = "/BananaProServer/index.php"
 
 today = datetime.datetime.now().strftime("%Y-%m-%d")
 # Files paths in production
 msgFilePath = '/root/slope-data/' + today + '_canbus-messages.txt'
 tagsFilePath = '/root/slope-data/' + today + '_rfid-tags.txt'
-logFilePath = '/var/log/slope/' + today + '_upload-data.log'
+logFilePath = '/root/slope-log/' + today + '_slope-canbus.log'
 
 # Files paths in local development
 # msgFilePath = "../example_slope-canbus-messages.txt"
@@ -43,10 +43,14 @@ try:
 			tagsFile = open(tagsFilePath, 'r')
 			for tag in tagsFile:
 				conn = httplib.HTTPConnection(url)
-				conn.request("POST", servlet + "/tags/upload", tag, headers)
-				if conn.getresponse().status != 200:
-					write_log('Error: ' + conn.getresponse().status + ' ' + conn.getresponse().reason)
-				time.sleep(0.005)
+				conn.request("POST", servlet, tag, headers)
+				response = conn.getresponse()
+				status = response.status
+				text = response.read()
+				if status != 200:
+					write_log('Error: ' + status + ' ' + response.reason)
+				print text
+				time.sleep(0.005)	
 
 			tagsFile.close()
 			os.rename(tagsFilePath, tagsFilePath + ".done")
@@ -55,10 +59,14 @@ try:
 			msgFile = open(msgFilePath, 'r')
 			for msg in msgFile:
 				conn = httplib.HTTPConnection(url)
-				conn.request("POST", servlet + "/canmsg/upload", msg, headers)
-				if conn.getresponse().status != 200:
-					write_log('Error: ' + conn.getresponse().status + ' ' + conn.getresponse().reason)
-				time.sleep(0.001)
+				conn.request("POST", servlet, msg, headers)
+				response = conn.getresponse()
+				status = response.status
+				text = response.read()
+				if status != 200:
+					write_log('Error: ' + status + ' ' + response.reason)
+				print text	
+				time.sleep(0.005)
 
 			msgFile.close()
 			os.rename(msgFilePath, msgFilePath + ".done")

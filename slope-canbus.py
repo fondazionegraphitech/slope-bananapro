@@ -21,8 +21,7 @@ antennaPower = 2000
 today = datetime.datetime.now().strftime("%Y-%m-%d")
 msgFilePath = '/root/slope-data/' + today + '_canbus-messages.txt'
 tagsFilePath = '/root/slope-data/' + today + '_rfid-tags.txt'
-logFilePath = '/root/slope-data/' + today + '_slope-canbus.log'
-#logFilePath = '/var/log/slope/' + today + '_slope-canbus.log'
+logFilePath = '/root/slope-log/' + today + '_slope-canbus.log'
 
 
 def get_lifting_status(status):
