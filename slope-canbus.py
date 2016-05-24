@@ -184,7 +184,7 @@ try:
 			except subprocess.CalledProcessError:
 				write_log('Error executing lib: TagsReader.jar')
 
-			time.sleep(5)
+			time.sleep(1)
 		time.sleep(1)	
 
 except KeyboardInterrupt:
