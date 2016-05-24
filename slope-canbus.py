@@ -106,6 +106,7 @@ try:
 	flip = '0'
 	lastMsg30 = ""
 	lastMsg31 = ""
+	lastLifting = 0
 	while True:
 		data = pyCan.read(can_fd)
 		arrMess = data.split(':', 3)
@@ -168,9 +169,10 @@ try:
 					# write_msg("%d:%s" % (messId, strOutput))
 					objOutput = {"axleX": axleX, "axleY": axleY, "consumption": consumption, "lifting": lifting, "translation": translation, "timestamp": get_timestamp()}
 					write_msg(json.dumps(objOutput))
+					lastLifting = lifting
 
 		count += 1
-		if count == 100:
+		if count == 100 & lastLifting == 1:
 			count = 0
 			pyCan.send(can_fd, 1, '60:' + flip)
 			if flip == '0':
@@ -183,6 +185,7 @@ try:
 				write_log('Error executing lib: TagsReader.jar')
 
 			time.sleep(5)
+		time.sleep(1)	
 
 except KeyboardInterrupt:
 	write_log('Program exits with ctrl+c')
