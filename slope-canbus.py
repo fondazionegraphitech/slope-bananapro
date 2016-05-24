@@ -21,7 +21,8 @@ antennaPower = 2000
 today = datetime.datetime.now().strftime("%Y-%m-%d")
 msgFilePath = '/root/slope-data/' + today + '_canbus-messages.txt'
 tagsFilePath = '/root/slope-data/' + today + '_rfid-tags.txt'
-logFilePath = '/var/log/slope/' + today + '_slope-canbus.log'
+logFilePath = '/root/slope-data/' + today + '_slope-canbus.log'
+#logFilePath = '/var/log/slope/' + today + '_slope-canbus.log'
 
 
 def get_lifting_status(status):
@@ -170,7 +171,7 @@ try:
 					write_msg(json.dumps(objOutput))
 
 		count += 1
-		if count == 100:
+		if count == 100 & lifting == 1:
 			count = 0
 			pyCan.send(can_fd, 1, '60:' + flip)
 			if flip == '0':
