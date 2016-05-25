@@ -22,6 +22,7 @@ today = datetime.datetime.now().strftime("%Y-%m-%d")
 msgFilePath = '/root/slope-data/' + today + '_canbus-messages.txt'
 tagsFilePath = '/root/slope-data/' + today + '_rfid-tags.txt'
 logFilePath = '/root/slope-log/' + today + '_slope-canbus.log'
+streamFilePath = '/root/slope-log/' + today + '_slope-stream.txt'
 
 
 def get_lifting_status(status):
@@ -58,6 +59,12 @@ def write_msg(text):
 	# now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	msgfile.write(text + '\n')
 	msgfile.close()
+	
+def write_stream(text):
+	msgfile = open(streamFilePath, 'a+', 1)
+	# now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	msgfile.write(text + '\n')
+	msgfile.close()	
 
 
 def get_timestamp():
@@ -73,6 +80,7 @@ signal.signal(signal.SIGTERM, sigterm_handler)
 
 #print 'Python wrapper loaded'
 #print datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+write_log('Version 1.0')
 write_log('Python wrapper loaded')
 
 # setting the device number
@@ -111,6 +119,7 @@ try:
 	lastLifting = 0
 	while True:
 		data = pyCan.read(can_fd)
+		write_stream(data)
 		arrMess = data.split(':', 3)
 		messId = arrMess[0][:len(arrMess[0]) - 1]
 		if messId.isdigit():
