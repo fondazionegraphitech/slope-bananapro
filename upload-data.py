@@ -14,7 +14,7 @@ servlet = "/BananaProServer/index.php"
 today = datetime.datetime.now().strftime("%Y-%m-%d")
 msgFilePath = '/root/slope-data/' + today + '_canbus-messages.txt'
 tagsFilePath = '/root/slope-data/' + today + '_rfid-tags.txt'
-logFilePath = '/root/slope-log/' + today + '_slope-canbus.log'
+logFilePath = '/root/slope-log/' + today + '_slope-upload.log'
 
 # Files paths in local development
 # msgFilePath = "../example_slope-canbus-messages.txt"
