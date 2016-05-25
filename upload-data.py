@@ -70,8 +70,8 @@ try:
 			msgFile.close()
 			os.rename(msgFilePath, msgFilePath + ".done")
 
-#except IOError:
-	#write_log('Error: Industrial PC unreachable')
+except IOError:
+	write_log('Error: Industrial PC unreachable')
 
 finally:
 	conn.close()
