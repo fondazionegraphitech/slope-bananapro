@@ -35,7 +35,7 @@ try:
 	conn.request("GET", servlet)
 
 	if conn.getresponse().status == 200:
-		write_log('Connection with industrial pc established, send data')
+		write_log('Connection with the industrial pc established, send data')
 		headers = {"Content-type": "text/plain"}
 
 		if os.path.isfile(tagsFilePath):
@@ -70,7 +70,7 @@ try:
 			msgFile.close()
 			os.rename(msgFilePath, msgFilePath + ".done")
 
-except IOError:
+#except IOError:
 	#write_log('Error: Industrial PC unreachable')
 
 finally:
