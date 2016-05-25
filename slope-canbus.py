@@ -22,8 +22,8 @@ today = datetime.datetime.now().strftime("%Y-%m-%d")
 msgFilePath = '/root/slope-data/' + today + '_canbus-messages.txt'
 tagsFilePath = '/root/slope-data/' + today + '_rfid-tags.txt'
 logFilePath = '/root/slope-log/' + today + '_slope-canbus.log'
-streamFilePath = '/root/slope-log/' + today + '_slope-stream.txt'
 
+streamFilePath = '/root/slope-data/' + today + '_slope-stream.txt'
 
 def get_lifting_status(status):
 	if status == 0:
@@ -43,6 +43,8 @@ def get_translation_status(status):
 		return "going to load"
 	elif status == 2:
 		return "going to release"
+	elif status == 3:
+		return "antenna down"
 	else:
 		return "error"
 
@@ -80,7 +82,7 @@ signal.signal(signal.SIGTERM, sigterm_handler)
 
 #print 'Python wrapper loaded'
 #print datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-write_log('Version 1.0')
+write_log('Slope-Canbus Version 1.0')
 write_log('Python wrapper loaded')
 
 # setting the device number
@@ -119,7 +121,7 @@ try:
 	lastLifting = 0
 	while True:
 		data = pyCan.read(can_fd)
-		write_stream(data)
+		#write_stream(data) #debug: write the canbus stream as is
 		arrMess = data.split(':', 3)
 		messId = arrMess[0][:len(arrMess[0]) - 1]
 		if messId.isdigit():
@@ -141,8 +143,7 @@ try:
 					# (kg) kilogrammes
 					position = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[2]), int(arrBytes[3])])))[0])
 					# (m) meters
-					speed = float(struct.unpack('>f', "".join(
-						map(chr, [int(arrBytes[4]), int(arrBytes[5]), int(arrBytes[6]), int(arrBytes[7])])))[0])
+					speed = float(struct.unpack('>f', "".join(map(chr, [int(arrBytes[4]), int(arrBytes[5]), int(arrBytes[6]), int(arrBytes[7])])))[0])
 					# (m/s) meters at second
 
 					# decide what to do...
@@ -171,7 +172,7 @@ try:
 					consumption = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[2]), int(arrBytes[3])])))[0])
 					# (l/h) liters at hour
 					lifting = get_lifting_status(int(arrBytes[4]))
-					# lifting status (0='stop', 1='going up', 2='going down')
+					# lifting status (0='stop', 1='going up', 2='going down', 3='antenna down')
 					translation = get_translation_status(int(arrBytes[5]))
 					# translation status (0='stop', 1='going to load', 2='going to release')
 
@@ -180,8 +181,17 @@ try:
 					# write_msg("%d:%s" % (messId, strOutput))
 					objOutput = {"axleX": axleX, "axleY": axleY, "consumption": consumption, "lifting": lifting, "translation": translation, "timestamp": get_timestamp()}
 					write_msg(json.dumps(objOutput))
-					lastLifting = lifting
+					lastLifting = int(arrBytes[4]) 
+		
+		#every 0.5 sec see below (time.sleep)
+		try:
+			if lastLifting == 3:
+				subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower), shell=True)
+				lastLifting = 0
+		except subprocess.CalledProcessError:
+			write_log('Error executing lib: TagsReader.jar')			
 
+		#every 5 sec upload data and send watchdog
 		count += 1
 		if count == 10:
 			count = 0
@@ -191,14 +201,11 @@ try:
 			if flip == '1':
 				flip = '0'
 			try:
-				#if lastLifting == 1:
-				subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower), shell=True)
-				#	lastLifting = 0
+				subprocess.check_call("python upload-data.py", shell=True)
 			except subprocess.CalledProcessError:
-				write_log('Error executing lib: TagsReader.jar')
+				write_log('Error executing: Upload-data.py')	
 
-			#time.sleep(1)
-		time.sleep(1)	
+		time.sleep(0.5)	
 
 except KeyboardInterrupt:
 	write_log('Program exits with ctrl+c')

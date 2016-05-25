@@ -12,7 +12,6 @@ url = "127.0.0.1:80"
 servlet = "/BananaProServer/index.php"
 
 today = datetime.datetime.now().strftime("%Y-%m-%d")
-# Files paths in production
 msgFilePath = '/root/slope-data/' + today + '_canbus-messages.txt'
 tagsFilePath = '/root/slope-data/' + today + '_rfid-tags.txt'
 logFilePath = '/root/slope-log/' + today + '_slope-canbus.log'
@@ -29,14 +28,14 @@ def write_log(text):
 	logfile.write('[' + now + '] ' + text + '\n')
 	logfile.close()
 
-
-begin = int(round(time.time() * 1000))
+#write_log('Slope-Upload Version 1.0')
 
 try:
 	conn = httplib.HTTPConnection(url)
 	conn.request("GET", servlet)
 
 	if conn.getresponse().status == 200:
+		write_log('Connection with industrial pc established, send data')
 		headers = {"Content-type": "text/plain"}
 
 		if os.path.isfile(tagsFilePath):
@@ -72,11 +71,7 @@ try:
 			os.rename(msgFilePath, msgFilePath + ".done")
 
 except IOError:
-	write_log('Error: Industrial PC unreachable')
+	#write_log('Error: Industrial PC unreachable')
 
 finally:
 	conn.close()
-
-end = int(round(time.time() * 1000))
-
-print end - begin
