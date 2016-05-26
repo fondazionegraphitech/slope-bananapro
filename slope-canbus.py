@@ -187,7 +187,7 @@ try:
 		count += 1
 		
 		#every 0.5 sec see below (10 msg per second)
-		if count % 5 = 0:
+		if count % 5 == 0:
 			try:
 				if lastLifting == 3:
 					subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower), shell=True)
