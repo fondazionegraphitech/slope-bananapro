@@ -139,11 +139,11 @@ try:
 				if bytesNum.isdigit():
 					bytesNum = int(bytesNum)
 				if bytesNum == len(arrBytes):
-					weight = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[0]), int(arrBytes[1])])))[0])
+					weight = int(struct.unpack('<h', "".join(map(chr, [int(arrBytes[0]), int(arrBytes[1])])))[0])
 					# (kg) kilogrammes
-					position = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[2]), int(arrBytes[3])])))[0])
+					position = int(struct.unpack('<h', "".join(map(chr, [int(arrBytes[2]), int(arrBytes[3])])))[0])
 					# (m) meters
-					speed = float(struct.unpack('>f', "".join(map(chr, [int(arrBytes[4]), int(arrBytes[5]), int(arrBytes[6]), int(arrBytes[7])])))[0])
+					speed = float(struct.unpack('<f', "".join(map(chr, [int(arrBytes[4]), int(arrBytes[5]), int(arrBytes[6]), int(arrBytes[7])])))[0])
 					# (m/s) meters at second
 
 					# decide what to do...
@@ -169,7 +169,7 @@ try:
 					# (%) percentage of X axle grade (frontal)
 					axleY = int(arrBytes[1])
 					# (%) percentage of Y axle grade (lateral)
-					consumption = int(struct.unpack('>h', "".join(map(chr, [int(arrBytes[2]), int(arrBytes[3])])))[0])
+					consumption = int(struct.unpack('<h', "".join(map(chr, [int(arrBytes[2]), int(arrBytes[3])])))[0])
 					# (l/h) liters at hour
 					lifting = get_lifting_status(int(arrBytes[4]))
 					# lifting status (0='stop', 1='going up', 2='going down', 3='antenna down')
