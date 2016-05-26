@@ -182,18 +182,21 @@ try:
 					objOutput = {"axleX": axleX, "axleY": axleY, "consumption": consumption, "lifting": lifting, "translation": translation, "timestamp": get_timestamp()}
 					write_msg(json.dumps(objOutput))
 					lastLifting = int(arrBytes[4]) 
-		
-		#every 0.5 sec see below (time.sleep)
-		try:
-			if lastLifting == 3:
-				subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower), shell=True)
-				lastLifting = 0
-		except subprocess.CalledProcessError:
-			write_log('Error executing lib: TagsReader.jar')			
 
-		#every 5 sec upload data and send watchdog
+		
 		count += 1
-		if count == 10:
+		
+		#every 0.5 sec see below (10 msg per second)
+		if count % 5 = 0:
+			try:
+				if lastLifting == 3:
+					subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower), shell=True)
+					lastLifting = 0
+			except subprocess.CalledProcessError:
+				write_log('Error executing lib: TagsReader.jar')	
+		
+		#every 5 sec upload data and send watchdog
+		if count == 50:
 			count = 0
 			pyCan.send(can_fd, 1, '60:' + flip)
 			if flip == '0':
@@ -205,7 +208,7 @@ try:
 			except subprocess.CalledProcessError:
 				write_log('Error executing: Upload-data.py')	
 
-		time.sleep(0.5)	
+		time.sleep(0.1)	
 
 except KeyboardInterrupt:
 	write_log('Program exits with ctrl+c')
