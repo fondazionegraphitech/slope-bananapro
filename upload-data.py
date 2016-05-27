@@ -18,6 +18,9 @@ msgFilePath = '/root/slope-data/' + today + '_canbus-messages.txt'
 tagsFilePath = '/root/slope-data/' + today + '_rfid-tags.txt'
 logFilePath = '/root/slope-log/' + today + '_slope-upload.log'
 
+#msgFilePath = 'umba-comments/examples/2016-05-25_canbus-messages.txt'
+#tagsFilePath = 'umba-comments/examples/2016-05-25_rfid-tags.txt'
+
 def write_log(text):
 	logfile = open(logFilePath, 'a', 1)
 	now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -35,10 +38,26 @@ try:
 		write_log('Connection with the industrial pc established, send data')
 		headers = {"Content-type": "text/plain"}
 
-		# First, we will send TAGS data: one POST call for each Json stored in _rfid-tags.txt
+		# Send tags all together
 		if os.path.isfile(tagsFilePath):
 			tagsFile = open(tagsFilePath, 'r')
-			for tag in tagsFile:
+			tagsString = tagsFile.read()	
+			conn = httplib.HTTPConnection(url)
+			conn.request("POST", servlet, tagsString, headers)
+			response = conn.getresponse()
+			status = response.status
+			text = response.read().strip();
+			tagsFile.close()
+			
+			if status != 200:
+				write_log('Error: ' + status + ' ' + response.reason)
+			if status == 200:
+				# Then, we will rename _rfid-tags.txt in order to avoid to send same data in the future
+				write_log('Done: ' + tagsFilePath)
+				os.rename(tagsFilePath, tagsFilePath + "." + timestamp + ".done")
+
+			# First, we will send TAGS data: one POST call for each Json stored in _rfid-tags.txt
+			"""for tag in tagsFile:
 				conn = httplib.HTTPConnection(url)
 				conn.request("POST", servlet, tag, headers)
 				response = conn.getresponse()
@@ -48,12 +67,28 @@ try:
 					write_log('Error: ' + status + ' ' + response.reason)
 				time.sleep(0.005)	
 
-			tagsFile.close()
-			# Then, we will rename _rfid-tags.txt in order to avoid to send same data in the future
-			os.rename(tagsFilePath, tagsFilePath + "." + timestamp + ".done")
+			tagsFile.close()"""
+
+		# Send can all together
+		if os.path.isfile(msgFilePath):
+			msgFile = open(msgFilePath, 'r')
+			msgString = msgFile.read()	
+			conn = httplib.HTTPConnection(url)
+			conn.request("POST", servlet, msgString, headers)
+			response = conn.getresponse()
+			status = response.status
+			text = response.read().strip();
+			msgFile.close()
+			
+			if status != 200:
+				write_log('Error: ' + status + ' ' + response.reason)
+			if status == 200:
+				# Then, we will rename _rfid-tags.txt in order to avoid to send same data in the future
+				write_log('Done: ' + msgFilePath)
+				os.rename(msgFilePath, msgFilePath + "." + timestamp + ".done")
 
 		# Now, we will send CANBUS data: one POST call for each Json stored in _canbus-messages.txt
-		if os.path.isfile(msgFilePath):
+		"""if os.path.isfile(msgFilePath):
 			msgFile = open(msgFilePath, 'r')
 			for msg in msgFile:
 				conn = httplib.HTTPConnection(url)
@@ -67,7 +102,7 @@ try:
 
 			msgFile.close()
 			# Then, we will rename _canbus-messages.txt in order to avoid to send same data in the future
-			os.rename(msgFilePath, msgFilePath + "." + timestamp + ".done")
+			os.rename(msgFilePath, msgFilePath + "." + timestamp + ".done")"""
 
 except IOError:
 	write_log('Error: Industrial PC unreachable')
