@@ -217,6 +217,7 @@ try:
 				flip = '0'
 				
 			if not upload_th.isAlive():
+				upload_th = threading.Thread(target=upload.upload, args=())
 				upload_th.start()
 			"""try:
 				subprocess.check_call("python upload-data.py", shell=True)
