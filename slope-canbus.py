@@ -216,7 +216,7 @@ try:
 			if flip == '1':
 				flip = '0'
 				
-			if(!upload_th.isAlive())
+			if not upload_th.isAlive():
 				upload_th.start()
 			"""try:
 				subprocess.check_call("python upload-data.py", shell=True)
