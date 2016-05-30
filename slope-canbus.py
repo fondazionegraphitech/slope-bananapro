@@ -35,8 +35,8 @@ def get_incremental_number():
 				 		maxcounter = counter	 		
 	return maxcounter + 1
 
-incremental = str(get_incremental_number())
-msgFilePath = datafolder + incremental + '_canbus-messages.txt'
+incremental = get_incremental_number()
+msgFilePath = datafolder + str(incremental) + '_canbus-messages.txt'
 logFilePath = logFolder + 'slope-canbus.log'
 
 def get_lifting_status(status):
