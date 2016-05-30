@@ -19,12 +19,27 @@ import pyCan
 # 45mW allows to detect tags at aroud 50cm distance
 antennaPower = 2000
 
-today = datetime.datetime.now().strftime("%Y-%m-%d")
-msgFilePath = '/root/slope-data/' + today + '_canbus-messages.txt'
-tagsFilePath = '/root/slope-data/' + today + '_rfid-tags.txt'
-logFilePath = '/root/slope-log/' + today + '_slope-canbus.log'
+datafolder = '/root/slope-data/'
+logFolder = '/root/slope-log/'
 
-streamFilePath = '/root/slope-data/' + today + '_slope-stream.txt'
+def get_incremental_number():
+	maxcounter = 0
+	listFiles = os.listdir(datafolder)
+	for file in listFiles:
+		if os.path.isfile(datafolder + file):
+			name = file.split('_')
+			if len(name) > 0:
+				counter = name[0]
+				if counter.isdigit():
+					if counter > maxcounter:
+				 		maxcounter = counter	 		
+	return maxcounter + 1
+
+incremental = str(get_incremental_number())
+msgFilePath = datafolder + incremental + '_canbus-messages.txt'
+logFilePath = logFolder + incremental + '_slope-canbus.log'
+
+streamFilePath = datafolder + incremental + '_slope-stream.txt'
 
 def get_lifting_status(status):
 	if status == 0:
@@ -35,7 +50,6 @@ def get_lifting_status(status):
 		return "going down"
 	else:
 		return "error"
-
 
 def get_translation_status(status):
 	if status == 0:
@@ -48,13 +62,6 @@ def get_translation_status(status):
 		return "antenna down"
 	else:
 		return "error"
-
-def get_incremental_number():
-	path = '/root/slope-data/';
-	listFiles = os.listdir(path)
-	for file in listFiles:
-		print file
-
 
 def write_log(text):
 	logfile = open(logFilePath, 'a', 1)
@@ -77,7 +84,7 @@ def write_stream(text):
 
 
 def get_timestamp():
-	return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+	return str(int(round(time.time() * 1000)))	
 
 
 def sigterm_handler(_signo, _stack_frame):
@@ -89,7 +96,6 @@ signal.signal(signal.SIGTERM, sigterm_handler)
 
 #print 'Python wrapper loaded'
 #print datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-get_incremental_number()
 write_log('Slope-Canbus Version 1.0')
 write_log('Python wrapper loaded')
 
@@ -198,7 +204,7 @@ try:
 		if count % 5 == 0:
 			try:
 				if lastLifting == 3:
-					subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower), shell=True)
+					subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower) + " " + incremental, shell=True)
 					lastLifting = 0
 			except subprocess.CalledProcessError:
 				write_log('Error executing lib: TagsReader.jar')	
