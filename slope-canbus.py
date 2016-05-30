@@ -26,8 +26,6 @@ logFilePath = '/root/slope-log/' + today + '_slope-canbus.log'
 
 streamFilePath = '/root/slope-data/' + today + '_slope-stream.txt'
 
-get_incremental_number()
-
 def get_lifting_status(status):
 	if status == 0:
 		return "stop"
@@ -91,6 +89,7 @@ signal.signal(signal.SIGTERM, sigterm_handler)
 
 #print 'Python wrapper loaded'
 #print datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+get_incremental_number()
 write_log('Slope-Canbus Version 1.0')
 write_log('Python wrapper loaded')
 
