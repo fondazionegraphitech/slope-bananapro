@@ -195,11 +195,11 @@ try:
 		#every 0.5 sec see below (10 msg per second)
 		if count % 5 == 0:
 			try:
-				if lastLifting == 0:
+				if lastLifting == 3:
 					subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower) + " "  + str(incremental), shell=True)
 					lastLifting = 0
 			except subprocess.CalledProcessError, e:
-				write_log('Error executing lib: TagsReader.jar: ' + str(e))	
+				write_log('Error executing lib TagsReader.jar: ' + str(e))	
 		
 		#every 5 sec upload data and send watchdog
 		if count == 50:
@@ -212,7 +212,7 @@ try:
 			try:
 				subprocess.check_call("python upload-data.py", shell=True)
 			except subprocess.CalledProcessError, e:
-				write_log('Error executing: upload-data.py: ' + str(e))	
+				write_log('Error executing upload-data.py: ' + str(e))	
 
 		time.sleep(0.1)	
 
