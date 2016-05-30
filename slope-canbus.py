@@ -37,9 +37,9 @@ def get_incremental_number():
 
 incremental = str(get_incremental_number())
 msgFilePath = datafolder + incremental + '_canbus-messages.txt'
-logFilePath = logFolder + incremental + '_slope-canbus.log'
+logFilePath = logFolder + 'slope-canbus.log'
 
-streamFilePath = datafolder + incremental + '_slope-stream.txt'
+print 'Slope Service Started: Incremental Number ' + incremental
 
 def get_lifting_status(status):
 	if status == 0:
@@ -75,13 +75,6 @@ def write_msg(text):
 	# now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	msgfile.write(text + '\n')
 	msgfile.close()
-	
-def write_stream(text):
-	msgfile = open(streamFilePath, 'a+', 1)
-	# now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-	msgfile.write(text + '\n')
-	msgfile.close()	
-
 
 def get_timestamp():
 	return str(int(round(time.time() * 1000)))	
@@ -98,6 +91,7 @@ signal.signal(signal.SIGTERM, sigterm_handler)
 #print datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 write_log('Slope-Canbus Version 1.0')
 write_log('Python wrapper loaded')
+write_log('Incremental Log Number: ' + incremental)
 
 # setting the device number
 device = 0
@@ -135,7 +129,6 @@ try:
 	lastLifting = 0
 	while True:
 		data = pyCan.read(can_fd)
-		#write_stream(data) #debug: write the canbus stream as is
 		arrMess = data.split(':', 3)
 		messId = arrMess[0][:len(arrMess[0]) - 1]
 		if messId.isdigit():
