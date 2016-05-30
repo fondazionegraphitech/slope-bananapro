@@ -8,6 +8,7 @@ import sys
 import subprocess
 import struct
 import json
+import os
 
 sys.path.insert(0, '/root/can4linux-code/can4linux-examples')
 import pyCan
@@ -24,6 +25,8 @@ tagsFilePath = '/root/slope-data/' + today + '_rfid-tags.txt'
 logFilePath = '/root/slope-log/' + today + '_slope-canbus.log'
 
 streamFilePath = '/root/slope-data/' + today + '_slope-stream.txt'
+
+get_incremental_number()
 
 def get_lifting_status(status):
 	if status == 0:
@@ -48,6 +51,12 @@ def get_translation_status(status):
 	else:
 		return "error"
 
+def get_incremental_number(){
+	path = '/root/slope-data/';
+	listFiles = os.listdir(path)
+	for file in listFiles:
+		print file
+}
 
 def write_log(text):
 	logfile = open(logFilePath, 'a', 1)

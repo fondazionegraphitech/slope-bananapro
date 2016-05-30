@@ -26,8 +26,9 @@ def write_log(text):
 	now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	logfile.write('[' + now + '] ' + text + '\n')
 	logfile.close()
-	
-timestamp =  str(int(round(time.time() * 1000)))	
+
+def get_timestamp():
+	return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")	
 
 try:
 	# Within this code we are trying to check if the industrial pc is reachable
@@ -54,7 +55,7 @@ try:
 			if status == 200:
 				# Then, we will rename _rfid-tags.txt in order to avoid to send same data in the future
 				write_log('Done: ' + tagsFilePath)
-				os.rename(tagsFilePath, tagsFilePath + "." + timestamp + ".done")
+				os.rename(tagsFilePath, tagsFilePath + "." + get_timestamp() + ".done")
 
 			# First, we will send TAGS data: one POST call for each Json stored in _rfid-tags.txt
 			"""for tag in tagsFile:
@@ -85,7 +86,7 @@ try:
 			if status == 200:
 				# Then, we will rename _rfid-tags.txt in order to avoid to send same data in the future
 				write_log('Done: ' + msgFilePath)
-				os.rename(msgFilePath, msgFilePath + "." + timestamp + ".done")
+				os.rename(msgFilePath, msgFilePath + "." + get_timestamp() + ".done")
 
 		# Now, we will send CANBUS data: one POST call for each Json stored in _canbus-messages.txt
 		"""if os.path.isfile(msgFilePath):
