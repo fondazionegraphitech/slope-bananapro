@@ -219,10 +219,6 @@ try:
 			if not upload_th.isAlive():
 				upload_th = threading.Thread(target=upload.upload, args=())
 				upload_th.start()
-			"""try:
-				subprocess.check_call("python upload-data.py", shell=True)
-			except subprocess.CalledProcessError, e:
-				write_log('Error executing upload-data.py: ' + str(e))	"""
 
 		time.sleep(0.1)	
 
