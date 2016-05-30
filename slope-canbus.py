@@ -51,12 +51,12 @@ def get_translation_status(status):
 	else:
 		return "error"
 
-def get_incremental_number(){
+def get_incremental_number():
 	path = '/root/slope-data/';
 	listFiles = os.listdir(path)
 	for file in listFiles:
 		print file
-}
+
 
 def write_log(text):
 	logfile = open(logFilePath, 'a', 1)
