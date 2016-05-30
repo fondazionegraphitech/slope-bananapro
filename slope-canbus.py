@@ -130,7 +130,7 @@ try:
 	lastMsg31 = ""
 	lastLifting = 0
 	
-	upload_th = threading.Thread(upload.upload, ())
+	upload_th = threading.Thread(target=upload.upload, args=())
 	
 	while True:
 		data = pyCan.read(can_fd)
