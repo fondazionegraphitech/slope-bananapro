@@ -194,7 +194,7 @@ try:
 		#every 0.5 sec see below (10 msg per second)
 		if count % 5 == 0:
 			try:
-				if lastLifting == 3:
+				if lastLifting == 0:
 					subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower) + " " + incremental, shell=True)
 					lastLifting = 0
 			except subprocess.CalledProcessError:
@@ -211,7 +211,7 @@ try:
 			try:
 				subprocess.check_call("python upload-data.py", shell=True)
 			except subprocess.CalledProcessError:
-				write_log('Error executing: Upload-data.py')	
+				write_log('Error executing: upload-data.py')	
 
 		time.sleep(0.1)	
 
