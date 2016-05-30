@@ -196,7 +196,7 @@ try:
 		if count % 5 == 0:
 			try:
 				if lastLifting == 0:
-					subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower), shell=True)
+					subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower) + " "  + str(incremental), shell=True)
 					lastLifting = 0
 			except subprocess.CalledProcessError:
 				write_log('Error executing lib: TagsReader.jar')	
