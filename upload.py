@@ -8,6 +8,8 @@ import datetime
 import time
 import os
 
+logFolder = None
+
 def write_log(text):
 	logfile = open(logFilePath, 'a', 1)
 	now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -17,7 +19,8 @@ def write_log(text):
 def get_timestamp():
 	return str(int(round(time.time() * 1000)))		
 
-def upload(datafolder, logFolder):
+def upload(datafolder, logFolder_):
+	logFolder = logFolder_
 	# URL or IP and Port of Industrial PC
 	url = "127.0.0.1:80"
 	servlet = "/BananaProServer/index.php"
