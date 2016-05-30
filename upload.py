@@ -19,12 +19,12 @@ def write_log(text):
 def get_timestamp():
 	return str(int(round(time.time() * 1000)))		
 
-def upload(datafolder, logFolder):
+def upload(datafolder, logFilePath_):
 	# URL or IP and Port of Industrial PC
 	url = "127.0.0.1:80"
 	servlet = "/BananaProServer/index.php"
 
-	logFilePath = logFolder + 'slope-upload.log'
+	logFilePath = logFilePath_
 
 	# Timestamp here to have the same timestamp for all the loops
 	timestamp = get_timestamp()

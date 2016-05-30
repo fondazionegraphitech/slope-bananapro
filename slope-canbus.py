@@ -212,7 +212,7 @@ try:
 			if flip == '1':
 				flip = '0'
 				
-			upload.upload(datafolder, logFolder)	
+			upload.upload(datafolder, logFilePath)	
 			"""try:
 				subprocess.check_call("python upload-data.py", shell=True)
 			except subprocess.CalledProcessError, e:
