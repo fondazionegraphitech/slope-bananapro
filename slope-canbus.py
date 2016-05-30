@@ -209,10 +209,10 @@ try:
 				flip = '1'
 			if flip == '1':
 				flip = '0'
-			try:
+			"""try:
 				subprocess.check_call("python upload-data.py", shell=True)
 			except subprocess.CalledProcessError, e:
-				write_log('Error executing upload-data.py: ' + str(e))	
+				write_log('Error executing upload-data.py: ' + str(e))	"""
 
 		time.sleep(0.1)	
 
