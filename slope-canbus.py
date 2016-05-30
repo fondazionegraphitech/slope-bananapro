@@ -39,8 +39,6 @@ incremental = str(get_incremental_number())
 msgFilePath = datafolder + incremental + '_canbus-messages.txt'
 logFilePath = logFolder + 'slope-canbus.log'
 
-print 'Slope Service Started: Incremental Number ' + incremental
-
 def get_lifting_status(status):
 	if status == 0:
 		return "stop"
