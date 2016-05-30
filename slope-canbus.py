@@ -9,6 +9,7 @@ import subprocess
 import struct
 import json
 import os
+import thread
 
 sys.path.insert(0, '/root/can4linux-code/can4linux-examples')
 import pyCan
@@ -128,6 +129,9 @@ try:
 	lastMsg30 = ""
 	lastMsg31 = ""
 	lastLifting = 0
+	
+	upload_th = threading.Thread(upload.upload, ())
+	
 	while True:
 		data = pyCan.read(can_fd)
 		arrMess = data.split(':', 3)
@@ -212,7 +216,8 @@ try:
 			if flip == '1':
 				flip = '0'
 				
-			upload.upload()	
+			if(!upload_th.isAlive())
+				upload_th.start()
 			"""try:
 				subprocess.check_call("python upload-data.py", shell=True)
 			except subprocess.CalledProcessError, e:
