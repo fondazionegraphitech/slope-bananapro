@@ -31,6 +31,7 @@ def get_incremental_number():
 			if len(name) > 0:
 				counter = name[0]
 				if counter.isdigit():
+					counter = int(counter)
 					if counter > maxcounter:
 				 		maxcounter = counter	 		
 	return maxcounter + 1
@@ -89,7 +90,7 @@ signal.signal(signal.SIGTERM, sigterm_handler)
 #print datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 write_log('Slope-Canbus Version 1.0')
 write_log('Python wrapper loaded')
-write_log('Incremental Log Number: ' + incremental)
+write_log('Incremental Log Number: ' + str(incremental))
 
 # setting the device number
 device = 0
