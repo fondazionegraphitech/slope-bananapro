@@ -8,7 +8,7 @@ import datetime
 import time
 import os
 
-logFilePath = None
+logFilePath = ""
 
 def write_log(text):
 	logfile = open(logFilePath, 'a', 1)
