@@ -13,7 +13,7 @@ import os
 sys.path.insert(0, '/root/can4linux-code/can4linux-examples')
 import pyCan
 
-import upload-data
+import upload
 
 # the power expressed in (mW)
 # default is around 660
