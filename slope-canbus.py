@@ -9,7 +9,7 @@ import subprocess
 import struct
 import json
 import os
-import thread
+import threading
 
 sys.path.insert(0, '/root/can4linux-code/can4linux-examples')
 import pyCan
