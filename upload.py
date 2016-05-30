@@ -19,7 +19,7 @@ def write_log(text):
 def get_timestamp():
 	return str(int(round(time.time() * 1000)))		
 
-def upload(datafolder, logFolder_):
+def upload(datafolder, logFolder):
 	# URL or IP and Port of Industrial PC
 	url = "127.0.0.1:80"
 	servlet = "/BananaProServer/index.php"
