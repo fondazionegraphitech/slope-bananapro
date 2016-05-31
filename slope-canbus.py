@@ -161,7 +161,7 @@ try:
 					# decide what to do...
 					# strOutput = str(weight) + "kg " + str(position) + "m " + str(speed) + "m/s "
 					# write_msg("%d:%s" % (messId, strOutput))
-					objOutput = {"weight": weight, "position": position, "speed": speed, "timestamp": get_timestamp()}
+					objOutput = {"id": incremental, "weight": weight, "position": position, "speed": speed, "timestamp": get_timestamp()}
 					write_msg(json.dumps(objOutput))
 
 		if messId == 31:
@@ -191,7 +191,7 @@ try:
 					# decide what to do...
 					# strOutput = str(axleX) + "% " + str(axleY) + "% " + str(consumption) + "l/h " + lifting + " " + translation
 					# write_msg("%d:%s" % (messId, strOutput))
-					objOutput = {"axleX": axleX, "axleY": axleY, "consumption": consumption, "lifting": lifting, "translation": translation, "timestamp": get_timestamp()}
+					objOutput = {"id": incremental, "axleX": axleX, "axleY": axleY, "consumption": consumption, "lifting": lifting, "translation": translation, "timestamp": get_timestamp()}
 					write_msg(json.dumps(objOutput))
 					lastLifting = int(arrBytes[4]) 
 
