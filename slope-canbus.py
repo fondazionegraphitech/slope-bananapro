@@ -50,6 +50,10 @@ def get_lifting_status(status):
 		return "going up"
 	elif status == 2:
 		return "going down"
+	elif status == 3:
+		return "going up, antenna down"	
+	elif status == 4:
+		return "going down, antenna down"		
 	else:
 		return "error"
 
@@ -60,8 +64,6 @@ def get_translation_status(status):
 		return "going to load"
 	elif status == 2:
 		return "going to release"
-	elif status == 3:
-		return "antenna down"
 	else:
 		return "error"
 
