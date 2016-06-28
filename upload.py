@@ -8,8 +8,11 @@ import datetime
 import time
 import os
 
-datafolder = '/root/slope-data/'
-logFolder = '/root/slope-log/'
+#datafolder = '/root/slope-data/'
+#logFolder = '/root/slope-log/'
+
+datafolder = './umba-comments/examples/'
+logFolder = './umba-comments/slope-log/'
 
 logFilePath = logFolder + 'slope-upload.log'
 
@@ -24,8 +27,10 @@ def get_timestamp():
 
 def upload():
 	# URL or IP and Port of Industrial PC
-	url = "127.0.0.1:80"
-	servlet = "/BananaProServer/index.php"
+	#url = "127.0.0.1:80"
+	url = "192.168.43.226:8001"
+	servlet_GET = "/SLOPE/HTTPMethod_SLOPE"
+	servlet_POST = "/SLOPE/HTTPMethod_SLOPE_2"
 
 	# Timestamp here to have the same timestamp for all the loops
 	timestamp = get_timestamp()
@@ -33,8 +38,7 @@ def upload():
 	try:
 		# Within this code we are trying to check if the industrial pc is reachable
 		conn = httplib.HTTPConnection(url)
-		conn.request("GET", servlet)
-
+		conn.request("GET", servlet_GET)
 		if conn.getresponse().status == 200:
 			write_log('Connection with the industrial pc established, send data')
 			headers = {"Content-type": "text/plain"}
@@ -50,7 +54,7 @@ def upload():
 						msgFile = open(msgFilePath, 'r')
 						msgString = msgFile.read()	
 						conn = httplib.HTTPConnection(url)
-						conn.request("POST", servlet, msgString, headers)
+						conn.request("POST", servlet_POST, msgString, headers)
 						response = conn.getresponse()
 						status = response.status
 						text = response.read().strip();
@@ -61,8 +65,10 @@ def upload():
 						if status == 200:
 							# Then, we will rename _rfid-tags.txt in order to avoid to send same data in the future
 							write_log('Done: ' + msgFilePath)
-							os.rename(msgFilePath, msgFilePath + "." + timestamp + ".done")
+							#os.rename(msgFilePath, msgFilePath + "." + timestamp + ".done")
 	except IOError:
 		write_log('Error: Industrial PC unreachable')
 	finally:
 		conn.close()
+			
+#upload() #Used by tests made from executing this script from the PC		
