@@ -65,7 +65,7 @@ def upload():
 						if status == 200:
 							# Then, we will rename _rfid-tags.txt in order to avoid to send same data in the future
 							write_log('Done: ' + msgFilePath)
-							#os.rename(msgFilePath, msgFilePath + "." + timestamp + ".done")
+							os.rename(msgFilePath, msgFilePath + "." + timestamp + ".done")
 	except IOError:
 		write_log('Error: Industrial PC unreachable')
 	finally:
