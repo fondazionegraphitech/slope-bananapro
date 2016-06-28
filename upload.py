@@ -43,6 +43,7 @@ def upload():
 			write_log('Connection with the industrial pc established, send data')
 			headers = {"Content-type": "text/plain"}
 		
+			sentFiles = 0
 			# Send all the files not delivered before
 			listFiles = os.listdir(datafolder)
 			for file in listFiles:
@@ -66,6 +67,11 @@ def upload():
 							# Then, we will rename _rfid-tags.txt in order to avoid to send same data in the future
 							write_log('Done: ' + msgFilePath)
 							os.rename(msgFilePath, msgFilePath + "." + timestamp + ".done")
+							sentFiles++
+				if sentFiles == 0:
+					msgString = 'Nothing to upload ' + 	timestamp
+					conn = httplib.HTTPConnection(url)
+					conn.request("POST", servlet_POST, msgString, headers)		
 	except IOError:
 		write_log('Error: Industrial PC unreachable')
 	finally:
