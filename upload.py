@@ -67,7 +67,7 @@ def upload():
 							# Then, we will rename _rfid-tags.txt in order to avoid to send same data in the future
 							write_log('Done: ' + msgFilePath)
 							os.rename(msgFilePath, msgFilePath + "." + timestamp + ".done")
-							sentFiles++
+							sentFiles=sentFiles+1
 				if sentFiles == 0:
 					msgString = 'Nothing to upload ' + 	timestamp
 					conn = httplib.HTTPConnection(url)
