@@ -28,7 +28,7 @@ def get_timestamp():
 def upload():
 	# URL or IP and Port of Industrial PC
 	#url = "127.0.0.1:80"
-	url = "192.168.43.226:8001"
+	url = "192.168.43.78:8001"
 	servlet_GET = "/SLOPE/HTTPMethod_SLOPE"
 	servlet_POST = "/SLOPE/HTTPMethod_SLOPE_2"
 
