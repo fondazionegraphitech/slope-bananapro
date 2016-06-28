@@ -8,11 +8,11 @@ import datetime
 import time
 import os
 
-#datafolder = '/root/slope-data/'
-#logFolder = '/root/slope-log/'
+datafolder = '/root/slope-data/'
+logFolder = '/root/slope-log/'
 
-datafolder = './umba-comments/examples/'
-logFolder = './umba-comments/slope-log/'
+#datafolder = './umba-comments/examples/'
+#logFolder = './umba-comments/slope-log/'
 
 logFilePath = logFolder + 'slope-upload.log'
 
