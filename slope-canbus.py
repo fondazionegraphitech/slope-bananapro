@@ -132,6 +132,9 @@ try:
 	lastMsg31 = ""
 	lastLifting = 0
 	
+	speedLimit = 1 # (m/s) meters at second 3.6 km/h
+	lastSpeed = 0
+	
 	upload_th = threading.Thread(target=upload.upload, args=())
 	
 	while True:
@@ -165,6 +168,7 @@ try:
 					# write_msg("%d:%s" % (messId, strOutput))
 					objOutput = {"id": incremental, "weight": weight, "position": position, "speed": speed, "timestamp": get_timestamp()}
 					write_msg(json.dumps(objOutput))
+					lastSpeed = speed
 
 		if messId == 31:
 			# print messId
@@ -203,7 +207,7 @@ try:
 		#every 0.5 sec see below (10 msg per second)
 		if count % 5 == 0:
 			try:
-				if lastLifting == 3:
+				if lastLifting == 3 and lastSpeed <= speedLimit: #if is going up AND it is not moving
 					subprocess.check_call("java -jar /root/slope-bananapro/TagsReader.jar " + str(antennaPower) + " "  + str(incremental), shell=True)
 					lastLifting = 0
 			except subprocess.CalledProcessError, e:
